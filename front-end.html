@@ -1,0 +1,54 @@
+<!-- Inside your HTML file (front-end.html) -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identifying Ships Using Satellite Images</title>
+    <style>
+        form {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        #imageForm input {
+            margin-bottom: 10px;
+        }
+        
+    </style>
+</head>
+<body style="background-image:url('../static/background\ image.PNG'); background-size: cover;">
+    <form id="imageForm" enctype="multipart/form-data" style="height:200px;width:300px;margin-top:250px;margin-left:500px">
+        <label style="text-align: center; color: black; font-size:22px;">Identifying Ships Using Satellite Images</label><br><br>
+        <input type="file" name="images" multiple accept="image/*" style="margin-left:90px;margin-bottom:20px;margin-top:20px"><br><br>
+        <button type="button" onclick="uploadImages()" style="margin-left:100px;margin-bottom:30px">Submit</button>
+    </form>
+    <div id="output"></div>
+
+    <script>
+        function uploadImages() {
+            const formData = new FormData(document.getElementById('imageForm'));
+            const fileInput = document.querySelector('input[name="images"]');
+            
+            if (fileInput.files.length === 0) {
+                alert('Please select at least one image.');
+                return;
+            }
+
+            fetch('/process_images', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Redirect to result page with image path as a query parameter
+                window.location.href = `/result?image_path=${encodeURIComponent(data.imagePath)}`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
